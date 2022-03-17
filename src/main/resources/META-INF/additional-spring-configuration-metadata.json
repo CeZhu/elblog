@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "elastcisearch.host",
+      "type": "java.lang.String",
+      "description": "Description for elastcisearch.host."
+  }
+] }
