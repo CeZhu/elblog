@@ -54,8 +54,3 @@ spring:
     port: 5672
     username: admin
     password: zhuce2008aaa
-
-#elasticsearch
-elasticsearch:
-  host: 8.136.44.26
-  port: 9200

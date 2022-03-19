@@ -2,7 +2,9 @@ package com.example.elblog.controller;
 
 
 import com.example.elblog.entity.Blog;
+import com.example.elblog.entity.BlogExample;
 import com.example.elblog.entity.Page;
+import com.example.elblog.entity.vo.BlogVO;
 import com.example.elblog.service.BlogService;
 import com.example.elblog.service.dto.BlogQueryCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author 朱策

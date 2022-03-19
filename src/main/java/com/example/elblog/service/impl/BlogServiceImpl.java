@@ -43,7 +43,7 @@ public class BlogServiceImpl implements BlogService {
     public Blog viewBlogById(Integer id) {
         Blog blog = blogMapper.selectByPrimaryKey(id);
         addClickHit(blog);
-        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_SAVE_ROUTINGKEY, JSON.toJSONString(blog));
+//        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_SAVE_ROUTINGKEY, JSON.toJSONString(blog));
         return blog;
     }
 
@@ -85,7 +85,7 @@ public class BlogServiceImpl implements BlogService {
         int insert = blogMapper.insert(blog);
 
         // 发消息存入es
-        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_SAVE_ROUTINGKEY, JSON.toJSONString(blog));
+//        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_SAVE_ROUTINGKEY, JSON.toJSONString(blog));
 
         return insert;
     }
@@ -98,7 +98,7 @@ public class BlogServiceImpl implements BlogService {
             int result = blogMapper.updateByPrimaryKeySelective(blog);
 
             // 发消息更新es
-            rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_SAVE_ROUTINGKEY, JSON.toJSONString(blog));
+//            rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_SAVE_ROUTINGKEY, JSON.toJSONString(blog));
 
             return result;
         } else {
@@ -124,14 +124,14 @@ public class BlogServiceImpl implements BlogService {
     public void deleteById(Integer id) {
         blogMapper.deleteByPrimaryKey(id);
         // 在es中删除
-        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_DELETE_ROUTINGKEY, id);
+//        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_DELETE_ROUTINGKEY, id);
     }
 
     @Override
     public void deleteByIds(Integer[] ids) {
         blogMapper.deleteByIds(ids);
         // 在es中删除
-        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_DELETEALL_ROUTINKEY, ids);
+//        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_DELETEALL_ROUTINKEY, ids);
     }
 
     @Override
