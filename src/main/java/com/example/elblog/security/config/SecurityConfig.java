@@ -1,7 +1,10 @@
 package com.example.elblog.security.config;
 
 import com.example.elblog.security.service.UserDetailsServiceImpl;
+import lombok.Data;
 import org.elasticsearch.core.List;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,8 +22,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
+@ConfigurationProperties(prefix = "front-end-config")
 @EnableWebSecurity
+@Data
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private String[] url;
     @Override
     protected void configure(HttpSecurity security) throws Exception
     {
@@ -59,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080"));// if your front end running on localhost:5000
+        configuration.setAllowedOrigins(Arrays.asList(url));// if your front end running on localhost:5000
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS","PATCH"));
         configuration.setAllowedHeaders(List.of(CorsConfiguration.ALL));
         configuration.setExposedHeaders(Arrays.asList("Content-Type","X-Requested-With","accept","Origin","Access-Control-Request-Method","Access-Control-Request-Headers"));
