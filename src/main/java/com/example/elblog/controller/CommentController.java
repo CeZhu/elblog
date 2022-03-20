@@ -56,7 +56,7 @@ public class CommentController {
         String vCode = (String) data.get("vCode");
         String value = redisTemplate.opsForValue().get(key);
         if (value != null && value.equals(vCode.toLowerCase())) {
-            String ip = request.getRemoteAddr();
+            String ip = request.getHeader("X-Real-IP");
             comment.setUserip(ip);
             comment.setState(CommentConst.UNCHECKED);
             comment.setCommentdate(new Date());

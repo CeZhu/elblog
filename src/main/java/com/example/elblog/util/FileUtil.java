@@ -38,6 +38,8 @@ public class FileUtil {
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+    public static final String SERVER_IP = "8.136.44.26";
+
     public static String upload(MultipartFile file, HttpServletRequest request) {
         String format = sdf.format(new Date());
         File folder;
@@ -59,7 +61,7 @@ public class FileUtil {
         String newName = UUID.randomUUID() + oldName.substring(oldName.lastIndexOf("."));
 
         try {
-            String filePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + format + "/" + newName;
+            String filePath = request.getScheme() + "://" + SERVER_IP + ":" + request.getServerPort() + "/" + format + "/" + newName;
             System.out.println(filePath);
             file.transferTo(new File(folder, newName));
             return filePath;
