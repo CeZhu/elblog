@@ -4,10 +4,10 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
+import java.io.Serializable;
 
 @Data
-public class
-BlogType {
+public class BlogType implements Serializable {
 
     private Integer id;
     @NotBlank

@@ -15,7 +15,12 @@ import com.example.elblog.util.FileUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +32,7 @@ import java.util.*;
  * @author 朱策
  */
 @Service
+@CacheConfig(cacheNames = "blog")
 public class BlogServiceImpl implements BlogService {
     @Resource
     private BlogMapper blogMapper;
@@ -35,11 +41,14 @@ public class BlogServiceImpl implements BlogService {
     private RabbitTemplate rabbitTemplate;
 
     @Override
+    @Cacheable(key = "#id")
     public Blog getBlogById(Integer id) {
         return blogMapper.selectByPrimaryKey(id);
     }
 
     @Override
+    @CachePut(key = "#id")
+    @Transactional(rollbackFor = Exception.class)
     public Blog viewBlogById(Integer id) {
         Blog blog = blogMapper.selectByPrimaryKey(id);
         addClickHit(blog);
@@ -91,6 +100,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    @CacheEvict(key = "#blog.id")
     public int updateBlog(Blog blog) {
         Blog blog1 = blogMapper.selectByPrimaryKey(blog.getId());
         if (blog1 != null) {
@@ -121,6 +131,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    @CacheEvict(key = "#id")
     public void deleteById(Integer id) {
         blogMapper.deleteByPrimaryKey(id);
         // 在es中删除
