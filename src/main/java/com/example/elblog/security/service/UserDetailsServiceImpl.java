@@ -3,6 +3,7 @@ package com.example.elblog.security.service;
 import com.example.elblog.entity.Blogger;
 import com.example.elblog.entity.BloggerExample;
 import com.example.elblog.mapper.BloggerMapper;
+import com.example.elblog.security.service.dto.LoginUser;
 import com.example.elblog.security.service.dto.UserDTO;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,6 +31,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("用户名不存在");
         }
         Blogger blogger = bloggers.get(0);
-        return new UserDTO(blogger, Collections.emptyList());
+        return new LoginUser(blogger,new ArrayList<>());
     }
 }

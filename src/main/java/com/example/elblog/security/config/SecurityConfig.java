@@ -1,7 +1,10 @@
 package com.example.elblog.security.config;
 
+import com.example.elblog.security.filter.JwtFilter;
 import com.example.elblog.security.service.UserDetailsServiceImpl;
+import lombok.AllArgsConstructor;
 import org.elasticsearch.core.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -21,6 +27,12 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private JwtFilter jwtFilter;
+    @Autowired
+    private AuthenticationEntryPoint authenticationEntryPoint;
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
     @Override
     protected void configure(HttpSecurity security) throws Exception
     {
@@ -34,14 +46,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .frameOptions()
                 .disable();
 
-        /*security.authorizeRequests()
-                .antMatchers("/blog","/blog/**").permitAll()
-                .antMatchers("/blogger/about").permitAll()
-                .antMatchers("/home").permitAll()
-                .antMatchers("/comment").permitAll()
-                .antMatchers("/auth","/auth/**").permitAll()
-                .antMatchers("/login").permitAll()
-                .anyRequest().authenticated();*/
+//        security.authorizeRequests()
+//                .antMatchers("/login").anonymous()
+//                .anyRequest().authenticated();
+
+        security.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        security.exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(authenticationEntryPoint);
+
+        security.logout();
     }
 
     @Bean

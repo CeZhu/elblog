@@ -30,4 +30,9 @@ public class BloggerServiceImpl implements BloggerService {
     public Blogger get() {
         return bloggerMapper.find();
     }
+
+    @Override
+    public Blogger selectById(Integer id) {
+        return bloggerMapper.selectByPrimaryKey(id);
+    }
 }

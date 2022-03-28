@@ -8,4 +8,5 @@ public interface BloggerService {
     BloggerVO about();
     void update(Blogger blogger);
     Blogger get();
+    Blogger selectById(Integer id);
 }
