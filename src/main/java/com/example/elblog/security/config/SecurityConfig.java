@@ -1,14 +1,11 @@
 package com.example.elblog.security.config;
 
 import com.example.elblog.security.filter.JwtFilter;
-import com.example.elblog.security.service.UserDetailsServiceImpl;
-import lombok.AllArgsConstructor;
 import org.elasticsearch.core.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -46,9 +43,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .frameOptions()
                 .disable();
 
-//        security.authorizeRequests()
-//                .antMatchers("/login").anonymous()
-//                .anyRequest().authenticated();
+        security.authorizeRequests()
+                .antMatchers("/login").anonymous()
+                .antMatchers("/blog").permitAll()
+                .antMatchers("/blogger/about").permitAll()
+                .antMatchers("/blogType/count").permitAll()
+                .antMatchers("/blog/sortByDate").permitAll()
+                .antMatchers("/link/all").permitAll()
+                .antMatchers("/blog/view/**").permitAll()
+                .antMatchers("/auth/captcha").permitAll()
+                .antMatchers("/comment").permitAll()
+                .antMatchers("/blog/next").permitAll()
+                .antMatchers("/blog/prev").permitAll()
+                .anyRequest().authenticated();
 
         security.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

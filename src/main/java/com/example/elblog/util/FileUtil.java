@@ -32,7 +32,7 @@ public class FileUtil {
 
     public static final String WINDOWS_TEMP = "e:/temp/";
 
-    public static final String LINUX_PATH = "/home/elblog/uploadImage/";
+    public static final String LINUX_PATH =    "/home/elblog/uploadImage/";
 
     public static final String SYS_TEM_DIR = System.getProperty("java.io.tmpdir") + File.separator;
 

@@ -17,7 +17,7 @@ import java.io.IOException;
 public class AuthenticationPointEntryImpl implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ApiError error = ApiError.error("用户名或者密码错误");
+        ApiError error = ApiError.error(HttpStatus.UNAUTHORIZED.value(),authException.getMessage());
         ResponseUtil.sendError(response,HttpStatus.UNAUTHORIZED.value(), JSON.toJSONString(error));
     }
 }

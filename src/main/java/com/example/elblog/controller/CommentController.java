@@ -1,6 +1,7 @@
 package com.example.elblog.controller;
 
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.elblog.constent.CommentConst;
@@ -57,6 +58,9 @@ public class CommentController {
         String value = redisTemplate.opsForValue().get(key);
         if (value != null && value.equals(vCode.toLowerCase())) {
             String ip = request.getHeader("X-Real-IP");
+            if (StrUtil.isBlank(ip)) {
+                ip = request.getRemoteAddr();
+            }
             comment.setUserip(ip);
             comment.setState(CommentConst.UNCHECKED);
             comment.setCommentdate(new Date());

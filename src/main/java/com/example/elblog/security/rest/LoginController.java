@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 public class LoginController {
@@ -44,7 +45,7 @@ public class LoginController {
         Map<String, Object> map = new HashMap<>(10);
         map.put("userId", userId);
         String jwtToken = JWTUtil.createToken(map, key.getBytes());
-        redisTemplate.opsForValue().set("blogger:" + userId, loginUser);
+        redisTemplate.opsForValue().set("blogger:" + userId, loginUser,1L, TimeUnit.DAYS);
         return new ResponseEntity<>(jwtToken, HttpStatus.OK);
     }
 

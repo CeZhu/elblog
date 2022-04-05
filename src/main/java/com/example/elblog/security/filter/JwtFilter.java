@@ -3,12 +3,15 @@ package com.example.elblog.security.filter;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTUtil;
 import com.example.elblog.entity.Blogger;
+import com.example.elblog.exception.BadRequestException;
 import com.example.elblog.security.service.dto.LoginUser;
 import com.example.elblog.service.BloggerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -37,6 +40,9 @@ public class JwtFilter extends OncePerRequestFilter {
         JWT jwt = JWTUtil.parseToken(token);
         Integer userId = (Integer) jwt.getPayload("userId");
         LoginUser loginUser = (LoginUser) redisTemplate.opsForValue().get("blogger:" + userId);
+        if (loginUser == null) {
+            throw new AccountExpiredException("密码已过期，请重新登录");
+        }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser,null, loginUser.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request,response);
