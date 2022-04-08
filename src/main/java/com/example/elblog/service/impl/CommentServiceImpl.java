@@ -13,6 +13,7 @@ import com.example.elblog.service.CommentService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -31,28 +32,19 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private AsyncServiceImpl asyncService;
+
     @Override
     public List<Comment> listComments(CommentExample example) {
         return commentMapper.selectByExample(example);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void saveComment(Comment comment) {
         commentMapper.insertSelective(comment);
-        addReplyHit(comment);
-    }
-
-    private void addReplyHit(Comment comment) {
-        Integer id = comment.getBlog().getId();
-        Blog blog = blogMapper.selectByPrimaryKey(id);
-        if (blog == null) {
-            return;
-        }
-        Integer replyhit = blog.getReplyhit();
-        replyhit++;
-        blog.setReplyhit(replyhit);
-        blogMapper.updateByPrimaryKeySelective(blog);
-        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_SAVE_ROUTINGKEY, JSON.toJSONString(blog));
+        asyncService.addReplyHit(comment);
     }
 
     @Override
@@ -84,24 +76,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(Integer id) {
-        substractReplyHit(id);
+        asyncService.subtractReplyHit(id);
         commentMapper.deleteByPrimaryKey(id);
     }
 
-    private void substractReplyHit(Integer id) {
-        Comment comment = commentMapper.selectByPrimaryKey(id);
-        Integer blogId = comment.getBlog().getId();
-        Blog blog = blogMapper.selectByPrimaryKey(blogId);
-        if (blog == null) {
-            return;
-        }
-        Integer replyhit = blog.getReplyhit();
-        replyhit = replyhit > 0 ? replyhit - 1 : 0;
-        blog.setReplyhit(replyhit);
-        blogMapper.updateByPrimaryKeySelective(blog);
-        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_SAVE_ROUTINGKEY, JSON.toJSONString(blog));
-    }
 
     @Override
     public void batchUpdate(List<Comment> commentList) {
@@ -109,6 +89,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void batchDelete(Integer[] ids) {
         commentMapper.deleteByIds(ids);
     }

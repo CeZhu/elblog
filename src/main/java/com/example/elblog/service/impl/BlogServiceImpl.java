@@ -40,6 +40,9 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private AsyncServiceImpl asyncService;
+
     @Override
     @Cacheable(key = "#id")
     public Blog getBlogById(Integer id) {
@@ -51,18 +54,8 @@ public class BlogServiceImpl implements BlogService {
     @Transactional(rollbackFor = Exception.class)
     public Blog viewBlogById(Integer id) {
         Blog blog = blogMapper.selectByPrimaryKey(id);
-        addClickHit(blog);
-//        rabbitTemplate.convertAndSend(MqConfig.ES_EXCHANGE, MqConfig.ES_SAVE_ROUTINGKEY, JSON.toJSONString(blog));
+        asyncService.addBlogViewCount(blog);
         return blog;
-    }
-
-    private void addClickHit(Blog source) {
-        Blog blog = new Blog();
-        BeanUtils.copyProperties(source, blog);
-        Integer clickhit = source.getClickhit();
-        clickhit++;
-        blog.setClickhit(clickhit);
-        blogMapper.updateByPrimaryKeySelective(blog);
     }
 
     @Override

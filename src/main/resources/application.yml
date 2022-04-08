@@ -22,3 +22,11 @@ web:
   upload-path:
     windows: d:/uploadImage/
     linux: /home/elblog/uploadImage/
+
+async:
+  executor:
+    thread:
+      corePoolSize: 3
+      maxPoolSize: 10
+      queueCapacity: 10
+      namePrefix: elblog-pool-
