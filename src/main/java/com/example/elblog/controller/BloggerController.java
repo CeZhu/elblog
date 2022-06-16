@@ -28,15 +28,17 @@ public class BloggerController {
     @PutMapping
     public ResponseEntity<Object> update(String username, String nickname,
                                          String sign, String profile,
-                                         MultipartFile file, HttpServletRequest request){
+                                         MultipartFile file, HttpServletRequest request) {
         Blogger blogger = new Blogger();
         blogger.setUsername(username);
         blogger.setNickname(nickname);
         blogger.setSign(sign);
         blogger.setProfile(profile);
 
-        String uploadPath = FileUtil.upload(file, request);
-        blogger.setImagename(uploadPath);
+        if (file != null && !file.isEmpty()) {
+            String uploadPath = FileUtil.upload(file, request);
+            blogger.setImagename(uploadPath);
+        }
 
         bloggerService.update(blogger);
         return new ResponseEntity<>(HttpStatus.OK);
